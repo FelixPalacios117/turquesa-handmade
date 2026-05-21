@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -26,11 +26,6 @@ function StoreLayout() {
   );
 }
 
-function AdminOutlet() {
-  const location = useLocation();
-  return <Outlet key={location.pathname} />;
-}
-
 export default function App() {
   return (
     <CartProvider>
@@ -44,12 +39,10 @@ export default function App() {
             <Route path="/nosotros" element={<About />} />
             <Route path="/contacto" element={<Contact />} />
           </Route>
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="productos" element={<AdminProducts />} />
-            <Route path="categorias" element={<AdminCategories />} />
-            <Route path="pedidos" element={<AdminOrders />} />
-          </Route>
+          <Route path="/admin" element={<AdminLayout><Dashboard /></AdminLayout>} />
+          <Route path="/admin/productos" element={<AdminLayout><AdminProducts /></AdminLayout>} />
+          <Route path="/admin/categorias" element={<AdminLayout><AdminCategories /></AdminLayout>} />
+          <Route path="/admin/pedidos" element={<AdminLayout><AdminOrders /></AdminLayout>} />
         </Routes>
       </BrowserRouter>
     </CartProvider>
