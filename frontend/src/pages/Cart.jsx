@@ -8,7 +8,7 @@ import "./Cart.css";
 export default function Cart() {
   const { cartItems, removeFromCart, updateQuantity, clearCart, totalPrice } = useCart();
   const [checkout, setCheckout] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", address: "" });
   const [orderSent, setOrderSent] = useState(false);
 
   const handleCheckout = async (e) => {
@@ -18,6 +18,8 @@ export default function Cart() {
         customer_name: form.name,
         customer_email: form.email,
         customer_phone: form.phone,
+        customer_address: form.address,
+        payment_method: "contra_entrega",
         items: cartItems.map((item) => ({
           product_id: item.id,
           quantity: item.quantity,
@@ -37,7 +39,8 @@ export default function Cart() {
       <div className="cart-empty">
         <FiShoppingBag size={64} />
         <h2>Pedido realizado con éxito</h2>
-        <p>Te contactaremos pronto para confirmar tu pedido.</p>
+        <p>Tu pedido ha sido registrado. El pago se realizará al momento de la entrega.</p>
+        <p style={{ color: "#999", fontSize: "0.9rem", marginTop: "0.5rem" }}>Te contactaremos por teléfono o email para coordinar la entrega.</p>
         <Link to="/catalogo" className="cta-btn">Seguir Comprando</Link>
       </div>
     );
@@ -101,8 +104,11 @@ export default function Cart() {
                 <span>Total</span>
                 <span>${totalPrice.toFixed(2)}</span>
               </div>
+              <div className="payment-info">
+                <span>Pago contra entrega</span>
+              </div>
               <button className="checkout-btn" onClick={() => setCheckout(true)}>
-                Proceder al Pago
+                Realizar Pedido
               </button>
               <button className="clear-btn" onClick={clearCart}>
                 Vaciar Carrito
@@ -130,13 +136,31 @@ export default function Cart() {
               </div>
               <div className="checkout-field">
                 <input
+                  required
                   placeholder="Teléfono"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 />
               </div>
+              <div className="checkout-field">
+                <textarea
+                  required
+                  placeholder="Dirección de entrega"
+                  rows={3}
+                  value={form.address}
+                  onChange={(e) => setForm({ ...form, address: e.target.value })}
+                  style={{ resize: "vertical" }}
+                />
+              </div>
+              <div className="payment-method-box">
+                <div className="payment-method-selected">
+                  <span>Método de pago:</span>
+                  <strong>Pago contra entrega</strong>
+                </div>
+                <p className="payment-note">Pagas en efectivo al recibir tu pedido</p>
+              </div>
               <div className="summary-row total">
-                <span>Total</span>
+                <span>Total a pagar</span>
                 <span>${totalPrice.toFixed(2)}</span>
               </div>
               <button type="submit" className="checkout-btn">

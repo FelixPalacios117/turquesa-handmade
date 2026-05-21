@@ -201,19 +201,52 @@
   margin-bottom: 0.8rem;
 }
 
-.checkout-field input {
+.checkout-field input,
+.checkout-field textarea {
   width: 100%;
   padding: 10px 14px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 0.9rem;
+  font-family: inherit;
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.3s;
 }
 
-.checkout-field input:focus {
+.checkout-field input:focus,
+.checkout-field textarea:focus {
   border-color: #5CBAA8;
+}
+
+.payment-info {
+  text-align: center;
+  padding: 0.6rem 0;
+  color: #5CBAA8;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.payment-method-box {
+  background: #F2F7F5;
+  border: 2px solid #5CBAA8;
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.payment-method-selected {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #1B2D2A;
+}
+
+.payment-note {
+  color: #888;
+  font-size: 0.8rem;
+  margin: 0.4rem 0 0;
 }
 
 @media (max-width: 768px) {
