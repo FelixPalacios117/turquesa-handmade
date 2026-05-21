@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, useLocation } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -26,34 +26,32 @@ function StoreLayout() {
   );
 }
 
-const router = createBrowserRouter([
-  {
-    element: <StoreLayout />,
-    children: [
-      { path: "/", element: <Home /> },
-      { path: "/catalogo", element: <Catalog /> },
-      { path: "/producto/:id", element: <ProductDetail /> },
-      { path: "/carrito", element: <Cart /> },
-      { path: "/nosotros", element: <About /> },
-      { path: "/contacto", element: <Contact /> },
-    ],
-  },
-  {
-    path: "/admin",
-    element: <AdminLayout />,
-    children: [
-      { index: true, element: <Dashboard /> },
-      { path: "productos", element: <AdminProducts /> },
-      { path: "categorias", element: <AdminCategories /> },
-      { path: "pedidos", element: <AdminOrders /> },
-    ],
-  },
-]);
+function AdminOutlet() {
+  const location = useLocation();
+  return <Outlet key={location.pathname} />;
+}
 
 export default function App() {
   return (
     <CartProvider>
-      <RouterProvider router={router} />
+      <BrowserRouter>
+        <Routes>
+          <Route element={<StoreLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/catalogo" element={<Catalog />} />
+            <Route path="/producto/:id" element={<ProductDetail />} />
+            <Route path="/carrito" element={<Cart />} />
+            <Route path="/nosotros" element={<About />} />
+            <Route path="/contacto" element={<Contact />} />
+          </Route>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="productos" element={<AdminProducts />} />
+            <Route path="categorias" element={<AdminCategories />} />
+            <Route path="pedidos" element={<AdminOrders />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </CartProvider>
   );
 }

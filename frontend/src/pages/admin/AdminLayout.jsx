@@ -1,8 +1,10 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { FiBox, FiGrid, FiShoppingBag, FiArrowLeft } from "react-icons/fi";
 import "./Admin.css";
 
 export default function AdminLayout() {
+  const location = useLocation();
+
   return (
     <div className="admin-layout">
       <aside className="admin-sidebar">
@@ -26,7 +28,7 @@ export default function AdminLayout() {
         </NavLink>
       </aside>
       <div className="admin-content">
-        <Outlet />
+        <Outlet key={location.pathname} />
       </div>
     </div>
   );
