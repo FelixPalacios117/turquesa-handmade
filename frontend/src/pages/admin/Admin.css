@@ -1,73 +1,76 @@
-.admin-layout {
-  display: flex;
+/* Top bar layout */
+.admin-wrapper {
   min-height: 100vh;
   background: #f0f2f5;
 }
 
-.admin-sidebar {
-  width: 240px;
-  background: #1B2D2A;
-  padding: 1.5rem;
+.admin-topbar {
   display: flex;
-  flex-direction: column;
-  position: fixed;
+  align-items: center;
+  background: #1B2D2A;
+  padding: 0 2rem;
+  height: 60px;
+  position: sticky;
   top: 0;
-  bottom: 0;
-  left: 0;
   z-index: 100;
+  gap: 1rem;
 }
 
 .admin-logo {
   color: #5CBAA8;
   font-family: "Georgia", serif;
-  font-size: 1.3rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-decoration: none;
+  margin-right: 2rem;
+  white-space: nowrap;
 }
 
-.admin-nav {
+.admin-logo:hover {
+  color: #7DD4C2;
+}
+
+.admin-topnav {
   display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+  align-items: center;
+  gap: 0.25rem;
   flex: 1;
 }
 
-.admin-nav a,
-.admin-back {
+.admin-topnav-link {
   color: #aaa;
   text-decoration: none;
-  padding: 10px 14px;
+  padding: 8px 16px;
   border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-size: 0.9rem;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
-.admin-nav a:hover,
-.admin-back:hover {
+.admin-topnav-link:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 
-.admin-nav a.active {
+.admin-topnav-link.active {
   background: #5CBAA8;
   color: #1B2D2A;
   font-weight: 600;
 }
 
-.admin-back {
-  margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 1rem;
+.admin-back-link {
+  margin-left: auto;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding-left: 1rem;
 }
 
-.admin-content {
-  flex: 1;
-  margin-left: 240px;
+.admin-main {
   padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* Dashboard */
@@ -328,19 +331,23 @@
 }
 
 @media (max-width: 768px) {
-  .admin-sidebar {
-    width: 60px;
-    padding: 1rem 0.5rem;
+  .admin-topbar {
+    padding: 0 1rem;
+    gap: 0.5rem;
+    overflow-x: auto;
   }
 
-  .admin-logo,
-  .admin-nav a span,
-  .admin-back span {
-    display: none;
+  .admin-logo {
+    font-size: 1rem;
+    margin-right: 1rem;
   }
 
-  .admin-content {
-    margin-left: 60px;
+  .admin-topnav-link {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .admin-main {
     padding: 1rem;
   }
 }
