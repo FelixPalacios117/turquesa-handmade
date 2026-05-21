@@ -1,0 +1,114 @@
+.product-detail-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #1B2D2A;
+  text-decoration: none;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.back-link:hover {
+  color: #5CBAA8;
+}
+
+.product-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.detail-image img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.detail-category {
+  text-transform: uppercase;
+  color: #5CBAA8;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.detail-info h1 {
+  font-family: "Georgia", serif;
+  font-size: 2rem;
+  color: #1B2D2A;
+  margin: 0.5rem 0;
+}
+
+.detail-price {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #5CBAA8;
+  margin: 1rem 0;
+}
+
+.detail-description {
+  color: #666;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.detail-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 36px;
+  background: #5CBAA8;
+  color: #1B2D2A;
+  border: none;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.detail-add-btn:hover {
+  background: #4A9E8E;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(92, 186, 168, 0.4);
+}
+
+.related-section {
+  margin-top: 4rem;
+}
+
+.related-section h2 {
+  font-family: "Georgia", serif;
+  color: #1B2D2A;
+  margin-bottom: 1.5rem;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.not-found {
+  text-align: center;
+  padding: 4rem;
+}
+
+.not-found a {
+  color: #5CBAA8;
+}
+
+@media (max-width: 768px) {
+  .product-detail {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
