@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import React from "react";
 import { CartProvider } from "./context/CartContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -26,6 +27,36 @@ function StoreLayout() {
   );
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: "2rem", color: "red" }}>
+          <h2>Error en el componente</h2>
+          <pre>{this.state.error?.message}</pre>
+          <button onClick={() => window.location.reload()}>Recargar</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function AdminPage({ children }) {
+  return (
+    <ErrorBoundary>
+      <AdminLayout>{children}</AdminLayout>
+    </ErrorBoundary>
+  );
+}
+
 export default function App() {
   return (
     <CartProvider>
@@ -39,10 +70,10 @@ export default function App() {
             <Route path="/nosotros" element={<About />} />
             <Route path="/contacto" element={<Contact />} />
           </Route>
-          <Route path="/admin" element={<AdminLayout><Dashboard /></AdminLayout>} />
-          <Route path="/admin/productos" element={<AdminLayout><AdminProducts /></AdminLayout>} />
-          <Route path="/admin/categorias" element={<AdminLayout><AdminCategories /></AdminLayout>} />
-          <Route path="/admin/pedidos" element={<AdminLayout><AdminOrders /></AdminLayout>} />
+          <Route path="/admin" element={<AdminPage key="dash"><Dashboard /></AdminPage>} />
+          <Route path="/admin/productos" element={<AdminPage key="prod"><AdminProducts /></AdminPage>} />
+          <Route path="/admin/categorias" element={<AdminPage key="cat"><AdminCategories /></AdminPage>} />
+          <Route path="/admin/pedidos" element={<AdminPage key="ord"><AdminOrders /></AdminPage>} />
         </Routes>
       </BrowserRouter>
     </CartProvider>
