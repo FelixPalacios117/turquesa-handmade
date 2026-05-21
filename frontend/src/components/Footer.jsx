@@ -26,11 +26,11 @@ export default function Footer() {
         </div>
         <div className="footer-col">
           <h4>Contacto</h4>
-          <p><FiPhone /> +58 412-1234567</p>
+          <p><FiPhone /> +503 7845-2391</p>
           <p><FiMail /> info@turquesa.com</p>
           <div className="social-links">
-            <a href="#"><FiInstagram size={20} /></a>
-            <a href="#"><FiFacebook size={20} /></a>
+            <a href="https://www.instagram.com/turquesa__handmade/" target="_blank" rel="noopener noreferrer"><FiInstagram size={20} /></a>
+            <a href="https://www.instagram.com/turquesa__handmade/" target="_blank" rel="noopener noreferrer"><FiFacebook size={20} /></a>
           </div>
         </div>
       </div>

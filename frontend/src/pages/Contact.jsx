@@ -25,7 +25,7 @@ export default function Contact() {
             <FiPhone size={24} />
             <div>
               <h3>Teléfono</h3>
-              <p>+58 412-1234567</p>
+              <p>+503 7845-2391</p>
             </div>
           </div>
           <div className="info-item">
