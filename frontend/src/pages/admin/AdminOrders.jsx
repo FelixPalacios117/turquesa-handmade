@@ -1,13 +1,17 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { api } from "../../api";
 
 const STATUSES = ["pendiente", "procesando", "enviado", "entregado", "cancelado"];
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
 
-  const load = () => api.getOrders().then(setOrders).catch(() => {});
+  const load = () => {
+    setLoading(true);
+    api.getOrders().then(setOrders).catch(() => setOrders([])).finally(() => setLoading(false));
+  };
   useEffect(load, []);
 
   const changeStatus = async (id, status) => {
@@ -21,10 +25,16 @@ export default function AdminOrders() {
         <h1>Pedidos</h1>
       </div>
 
-      {orders.length === 0 ? (
+      {loading ? (
         <p style={{ color: "#999", textAlign: "center", padding: "3rem" }}>
-          No hay pedidos registrados.
+          Cargando pedidos...
         </p>
+      ) : orders.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "4rem 2rem" }}>
+          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📋</div>
+          <h3 style={{ color: "#666", marginBottom: "0.5rem" }}>No hay pedidos aún</h3>
+          <p style={{ color: "#999" }}>Los pedidos realizados desde la tienda aparecerán aquí.</p>
+        </div>
       ) : (
         <table className="admin-table">
           <thead>
@@ -40,8 +50,8 @@ export default function AdminOrders() {
           </thead>
           <tbody>
             {orders.map((order) => (
-              <>
-                <tr key={order.id}>
+              <React.Fragment key={order.id}>
+                <tr>
                   <td>#{order.id}</td>
                   <td>{order.customer_name}</td>
                   <td>{order.customer_email}</td>
@@ -69,7 +79,7 @@ export default function AdminOrders() {
                   </td>
                 </tr>
                 {expandedId === order.id && (
-                  <tr key={`${order.id}-detail`}>
+                  <tr>
                     <td colSpan={7} style={{ background: "#f9f9f9", padding: "1rem" }}>
                       <strong>Items del pedido:</strong>
                       <ul style={{ marginTop: "0.5rem", paddingLeft: "1.5rem" }}>
@@ -82,7 +92,7 @@ export default function AdminOrders() {
                     </td>
                   </tr>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>
