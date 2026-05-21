@@ -10,7 +10,7 @@ services:
     name: turquesa-api
     runtime: docker
     dockerfilePath: ./api/Dockerfile
-    plan: free
+    plan: starter
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -19,13 +19,12 @@ services:
       - key: PORT
         value: 4000
 
-  # Frontend
+  # Frontend (static sites are free by default)
   - type: web
     name: turquesa-frontend
     runtime: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
-    plan: free
     envVars:
       - key: VITE_API_URL
         value: https://turquesa-api.onrender.com/api
