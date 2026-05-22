@@ -26,6 +26,7 @@ if (USE_PG) {
       image VARCHAR(500),
       category_id INT REFERENCES categories(id) ON DELETE SET NULL,
       featured BOOLEAN DEFAULT false,
+      stock INT DEFAULT 0,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );
@@ -46,6 +47,10 @@ if (USE_PG) {
       price DECIMAL(10,2) NOT NULL
     );
   `);
+
+  // Migration: add stock column if missing
+  const { rows: cols } = await pool.query(`SELECT column_name FROM information_schema.columns WHERE table_name='products' AND column_name='stock'`);
+  if (cols.length === 0) await pool.query(`ALTER TABLE products ADD COLUMN stock INT DEFAULT 0`);
 
   // Seed if empty
   const { rows } = await pool.query("SELECT COUNT(*) as c FROM categories");
@@ -123,7 +128,7 @@ if (USE_PG) {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL, price REAL NOT NULL, description TEXT, image TEXT,
       category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
-      featured INTEGER DEFAULT 0,
+      featured INTEGER DEFAULT 0, stock INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now'))
     );
@@ -140,6 +145,10 @@ if (USE_PG) {
       quantity INTEGER NOT NULL DEFAULT 1, price REAL NOT NULL
     );
   `);
+
+  // Migration: add stock column if missing
+  const hasStock = sqlite.prepare(`SELECT COUNT(*) as c FROM pragma_table_info('products') WHERE name='stock'`).get().c;
+  if (!hasStock) sqlite.exec(`ALTER TABLE products ADD COLUMN stock INTEGER DEFAULT 0`);
 
   const catCount = sqlite.prepare("SELECT COUNT(*) as c FROM categories").get().c;
   if (catCount === 0) {

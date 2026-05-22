@@ -33,8 +33,24 @@ if (db.isPg) {
   });
   router.put("/:id/status", async (req, res) => {
     try {
-      const { rows } = await db.query("UPDATE orders SET status=$1 WHERE id=$2 RETURNING *", [req.body.status, req.params.id]);
-      if (!rows.length) return res.status(404).json({ error: "No encontrado" });
+      const { status } = req.body;
+      const orderId = req.params.id;
+      // Get current status before updating
+      const { rows: current } = await db.query("SELECT status FROM orders WHERE id=$1", [orderId]);
+      if (!current.length) return res.status(404).json({ error: "No encontrado" });
+
+      const { rows } = await db.query("UPDATE orders SET status=$1 WHERE id=$2 RETURNING *", [status, orderId]);
+
+      // Subtract stock when order is marked as "entregado"
+      if (status === "entregado" && current[0].status !== "entregado") {
+        const { rows: items } = await db.query("SELECT product_id, quantity FROM order_items WHERE order_id=$1", [orderId]);
+        for (const item of items) {
+          if (item.product_id) {
+            await db.query("UPDATE products SET stock = GREATEST(stock - $1, 0) WHERE id=$2", [item.quantity, item.product_id]);
+          }
+        }
+      }
+
       res.json(rows[0]);
     } catch (err) { res.status(500).json({ error: err.message }); }
   });
@@ -62,9 +78,23 @@ if (db.isPg) {
   });
   router.put("/:id/status", (req, res) => {
     try {
-      const result = db.prepare("UPDATE orders SET status=? WHERE id=?").run(req.body.status, req.params.id);
-      if (!result.changes) return res.status(404).json({ error: "No encontrado" });
-      res.json(db.prepare("SELECT * FROM orders WHERE id = ?").get(req.params.id));
+      const { status } = req.body;
+      const orderId = req.params.id;
+      const current = db.prepare("SELECT status FROM orders WHERE id=?").get(orderId);
+      if (!current) return res.status(404).json({ error: "No encontrado" });
+
+      db.prepare("UPDATE orders SET status=? WHERE id=?").run(status, orderId);
+
+      // Subtract stock when order is marked as "entregado"
+      if (status === "entregado" && current.status !== "entregado") {
+        const items = db.prepare("SELECT product_id, quantity FROM order_items WHERE order_id=?").all(orderId);
+        const updateStock = db.prepare("UPDATE products SET stock = MAX(stock - ?, 0) WHERE id=?");
+        for (const item of items) {
+          if (item.product_id) updateStock.run(item.quantity, item.product_id);
+        }
+      }
+
+      res.json(db.prepare("SELECT * FROM orders WHERE id = ?").get(orderId));
     } catch (err) { res.status(500).json({ error: err.message }); }
   });
 }

@@ -48,11 +48,11 @@ if (db.isPg) {
 
   router.post("/", upload.single("image"), async (req, res) => {
     try {
-      const { name, price, description, category_id, featured } = req.body;
+      const { name, price, description, category_id, featured, stock } = req.body;
       const image = req.file ? `/uploads/${req.file.filename}` : req.body.image_url || null;
       const { rows } = await db.query(
-        `INSERT INTO products (name,price,description,category_id,image,featured) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-        [name, price, description, category_id, image, featured === "true"]
+        `INSERT INTO products (name,price,description,category_id,image,featured,stock) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+        [name, price, description, category_id, image, featured === "true", parseInt(stock) || 0]
       );
       res.status(201).json(rows[0]);
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -60,15 +60,15 @@ if (db.isPg) {
 
   router.put("/:id", upload.single("image"), async (req, res) => {
     try {
-      const { name, price, description, category_id, featured } = req.body;
+      const { name, price, description, category_id, featured, stock } = req.body;
       let image = req.body.image_url;
       if (req.file) image = `/uploads/${req.file.filename}`;
       const q = image
-        ? `UPDATE products SET name=$1,price=$2,description=$3,category_id=$4,featured=$5,image=$6,updated_at=NOW() WHERE id=$7 RETURNING *`
-        : `UPDATE products SET name=$1,price=$2,description=$3,category_id=$4,featured=$5,updated_at=NOW() WHERE id=$6 RETURNING *`;
+        ? `UPDATE products SET name=$1,price=$2,description=$3,category_id=$4,featured=$5,image=$6,stock=$7,updated_at=NOW() WHERE id=$8 RETURNING *`
+        : `UPDATE products SET name=$1,price=$2,description=$3,category_id=$4,featured=$5,stock=$6,updated_at=NOW() WHERE id=$7 RETURNING *`;
       const params = image
-        ? [name, price, description, category_id, featured === "true", image, req.params.id]
-        : [name, price, description, category_id, featured === "true", req.params.id];
+        ? [name, price, description, category_id, featured === "true", image, parseInt(stock) || 0, req.params.id]
+        : [name, price, description, category_id, featured === "true", parseInt(stock) || 0, req.params.id];
       const { rows } = await db.query(q, params);
       if (!rows.length) return res.status(404).json({ error: "No encontrado" });
       res.json(rows[0]);
@@ -114,11 +114,11 @@ if (db.isPg) {
 
   router.post("/", upload.single("image"), (req, res) => {
     try {
-      const { name, price, description, category_id, featured } = req.body;
+      const { name, price, description, category_id, featured, stock } = req.body;
       const image = req.file ? `/uploads/${req.file.filename}` : req.body.image_url || null;
       const result = db.prepare(
-        `INSERT INTO products (name,price,description,category_id,image,featured) VALUES (?,?,?,?,?,?)`
-      ).run(name, price, description, category_id, image, featured === "true" ? 1 : 0);
+        `INSERT INTO products (name,price,description,category_id,image,featured,stock) VALUES (?,?,?,?,?,?,?)`
+      ).run(name, price, description, category_id, image, featured === "true" ? 1 : 0, parseInt(stock) || 0);
       const row = db.prepare("SELECT * FROM products WHERE id = ?").get(result.lastInsertRowid);
       res.status(201).json(row);
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -126,15 +126,15 @@ if (db.isPg) {
 
   router.put("/:id", upload.single("image"), (req, res) => {
     try {
-      const { name, price, description, category_id, featured } = req.body;
+      const { name, price, description, category_id, featured, stock } = req.body;
       let image = req.body.image_url;
       if (req.file) image = `/uploads/${req.file.filename}`;
       if (image) {
-        db.prepare(`UPDATE products SET name=?,price=?,description=?,category_id=?,featured=?,image=?,updated_at=datetime('now') WHERE id=?`)
-          .run(name, price, description, category_id, featured === "true" ? 1 : 0, image, req.params.id);
+        db.prepare(`UPDATE products SET name=?,price=?,description=?,category_id=?,featured=?,image=?,stock=?,updated_at=datetime('now') WHERE id=?`)
+          .run(name, price, description, category_id, featured === "true" ? 1 : 0, image, parseInt(stock) || 0, req.params.id);
       } else {
-        db.prepare(`UPDATE products SET name=?,price=?,description=?,category_id=?,featured=?,updated_at=datetime('now') WHERE id=?`)
-          .run(name, price, description, category_id, featured === "true" ? 1 : 0, req.params.id);
+        db.prepare(`UPDATE products SET name=?,price=?,description=?,category_id=?,featured=?,stock=?,updated_at=datetime('now') WHERE id=?`)
+          .run(name, price, description, category_id, featured === "true" ? 1 : 0, parseInt(stock) || 0, req.params.id);
       }
       const row = db.prepare("SELECT * FROM products WHERE id = ?").get(req.params.id);
       if (!row) return res.status(404).json({ error: "No encontrado" });
