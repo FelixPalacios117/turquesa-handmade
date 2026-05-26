@@ -45,7 +45,7 @@ export default function ProductDetail() {
 
       <div className="product-detail">
         <div className="detail-image">
-          <img src={product.image} alt={product.name} />
+          <img src={product.image || "https://placehold.co/400x400?text=Sin+Foto"} alt={product.name} />
         </div>
         <div className="detail-info">
           <span className="detail-category">{product.category_name}</span>

@@ -52,6 +52,9 @@ if (USE_PG) {
   const { rows: cols } = await pool.query(`SELECT column_name FROM information_schema.columns WHERE table_name='products' AND column_name='stock'`);
   if (cols.length === 0) await pool.query(`ALTER TABLE products ADD COLUMN stock INT DEFAULT 0`);
 
+  // Migration: clear broken /uploads/ paths (files don't persist on Render)
+  await pool.query(`UPDATE products SET image = NULL WHERE image LIKE '/uploads/%'`);
+
   // Seed if empty
   const { rows } = await pool.query("SELECT COUNT(*) as c FROM categories");
   if (Number(rows[0].c) === 0) {

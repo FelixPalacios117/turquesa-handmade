@@ -14,7 +14,7 @@ export default function ProductCard({ product }) {
   return (
     <Link to={`/producto/${product.id}`} className="product-card">
       <div className="product-image">
-        <img src={product.image} alt={product.name} />
+        <img src={product.image || "https://placehold.co/400x400?text=Sin+Foto"} alt={product.name} />
         <button className="add-cart-btn" onClick={handleAdd}>
           <FiShoppingCart /> Agregar
         </button>

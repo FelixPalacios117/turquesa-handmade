@@ -117,7 +117,7 @@ export default function AdminProducts() {
         <tbody>
           {products.map((p) => (
             <tr key={p.id}>
-              <td><img src={p.image} alt={p.name} /></td>
+              <td>{p.image ? <img src={p.image} alt={p.name} /> : <div style={{ width: 50, height: 50, background: "#eee", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", color: "#aaa", fontSize: "0.7rem" }}>Sin foto</div>}</td>
               <td>{p.name}</td>
               <td>{p.category_name}</td>
               <td>${Number(p.price).toFixed(2)}</td>
