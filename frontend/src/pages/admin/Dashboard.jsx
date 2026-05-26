@@ -13,7 +13,7 @@ export default function Dashboard() {
     api.getOrders().then(setOrders).catch(() => {});
   }, []);
 
-  const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total), 0);
+  const totalRevenue = orders.filter(o => o.status === "entregado").reduce((sum, o) => sum + Number(o.total), 0);
 
   return (
     <div>
