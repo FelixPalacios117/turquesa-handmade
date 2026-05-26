@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FiPlus, FiCamera } from "react-icons/fi";
-import { api } from "../../api";
+import { api, resolveImage } from "../../api";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -44,7 +44,7 @@ export default function AdminProducts() {
       stock: product.stock || 0,
     });
     setImageFile(null);
-    setImagePreview(product.image || null);
+    setImagePreview(resolveImage(product.image) || null);
     setShowModal(true);
   };
 
@@ -117,7 +117,7 @@ export default function AdminProducts() {
         <tbody>
           {products.map((p) => (
             <tr key={p.id}>
-              <td><img src={p.image} alt={p.name} /></td>
+              <td><img src={resolveImage(p.image)} alt={p.name} /></td>
               <td>{p.name}</td>
               <td>{p.category_name}</td>
               <td>${Number(p.price).toFixed(2)}</td>

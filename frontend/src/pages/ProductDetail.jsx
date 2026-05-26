@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FiShoppingCart, FiArrowLeft } from "react-icons/fi";
 import { useCart } from "../context/CartContext";
-import { api } from "../api";
+import { api, resolveImage } from "../api";
 import ProductCard from "../components/ProductCard";
 import "./ProductDetail.css";
 
@@ -45,7 +45,7 @@ export default function ProductDetail() {
 
       <div className="product-detail">
         <div className="detail-image">
-          <img src={product.image} alt={product.name} />
+          <img src={resolveImage(product.image)} alt={product.name} />
         </div>
         <div className="detail-info">
           <span className="detail-category">{product.category_name}</span>
