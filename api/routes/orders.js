@@ -51,6 +51,16 @@ if (db.isPg) {
         }
       }
 
+      // Restore stock when a delivered order is cancelled
+      if (status === "cancelado" && current[0].status === "entregado") {
+        const { rows: items } = await db.query("SELECT product_id, quantity FROM order_items WHERE order_id=$1", [orderId]);
+        for (const item of items) {
+          if (item.product_id) {
+            await db.query("UPDATE products SET stock = stock + $1 WHERE id=$2", [item.quantity, item.product_id]);
+          }
+        }
+      }
+
       res.json(rows[0]);
     } catch (err) { res.status(500).json({ error: err.message }); }
   });
@@ -91,6 +101,15 @@ if (db.isPg) {
         const updateStock = db.prepare("UPDATE products SET stock = MAX(stock - ?, 0) WHERE id=?");
         for (const item of items) {
           if (item.product_id) updateStock.run(item.quantity, item.product_id);
+        }
+      }
+
+      // Restore stock when a delivered order is cancelled
+      if (status === "cancelado" && current.status === "entregado") {
+        const items = db.prepare("SELECT product_id, quantity FROM order_items WHERE order_id=?").all(orderId);
+        const restoreStock = db.prepare("UPDATE products SET stock = stock + ? WHERE id=?");
+        for (const item of items) {
+          if (item.product_id) restoreStock.run(item.quantity, item.product_id);
         }
       }
 
