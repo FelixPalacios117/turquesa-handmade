@@ -23,7 +23,7 @@ if (USE_PG) {
       name VARCHAR(200) NOT NULL,
       price DECIMAL(10,2) NOT NULL,
       description TEXT,
-      image VARCHAR(500),
+      image TEXT,
       category_id INT REFERENCES categories(id) ON DELETE SET NULL,
       featured BOOLEAN DEFAULT false,
       stock INT DEFAULT 0,
@@ -51,6 +51,9 @@ if (USE_PG) {
   // Migration: add stock column if missing
   const { rows: cols } = await pool.query(`SELECT column_name FROM information_schema.columns WHERE table_name='products' AND column_name='stock'`);
   if (cols.length === 0) await pool.query(`ALTER TABLE products ADD COLUMN stock INT DEFAULT 0`);
+
+  // Migration: change image column to TEXT for base64 storage
+  await pool.query(`ALTER TABLE products ALTER COLUMN image TYPE TEXT`);
 
   // Migration: clear broken /uploads/ paths (files don't persist on Render)
   await pool.query(`UPDATE products SET image = NULL WHERE image LIKE '/uploads/%'`);
