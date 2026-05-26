@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { FiShoppingCart } from "react-icons/fi";
 import { useCart } from "../context/CartContext";
-import { resolveImage } from "../api";
 import "./ProductCard.css";
 
 export default function ProductCard({ product }) {
@@ -15,7 +14,7 @@ export default function ProductCard({ product }) {
   return (
     <Link to={`/producto/${product.id}`} className="product-card">
       <div className="product-image">
-        <img src={resolveImage(product.image)} alt={product.name} />
+        <img src={product.image} alt={product.name} />
         <button className="add-cart-btn" onClick={handleAdd}>
           <FiShoppingCart /> Agregar
         </button>

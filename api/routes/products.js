@@ -1,20 +1,21 @@
 import { Router } from "express";
 import multer from "multer";
-import path from "path";
-import { fileURLToPath } from "url";
-import fs from "fs";
 import db from "../db.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const uploadsDir = path.join(__dirname, "..", "uploads");
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadsDir),
-  filename: (_req, file, cb) => cb(null, `${Date.now()}${path.extname(file.originalname)}`),
-});
-const upload = multer({ storage });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 const router = Router();
+
+function fileToDataUri(file) {
+  const mime = file.mimetype;
+  const base64 = file.buffer.toString("base64");
+  return `data:${mime};base64,${base64}`;
+}
+
+function getImage(req) {
+  if (req.file) return fileToDataUri(req.file);
+  if (req.body.image_url) return req.body.image_url;
+  return null;
+}
 
 if (db.isPg) {
   // ==================== PostgreSQL ====================
@@ -49,7 +50,7 @@ if (db.isPg) {
   router.post("/", upload.single("image"), async (req, res) => {
     try {
       const { name, price, description, category_id, featured, stock } = req.body;
-      const image = req.file ? `/uploads/${req.file.filename}` : req.body.image_url || null;
+      const image = getImage(req);
       const { rows } = await db.query(
         `INSERT INTO products (name,price,description,category_id,image,featured,stock) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
         [name, price, description, category_id, image, featured === "true", parseInt(stock) || 0]
@@ -61,8 +62,7 @@ if (db.isPg) {
   router.put("/:id", upload.single("image"), async (req, res) => {
     try {
       const { name, price, description, category_id, featured, stock } = req.body;
-      let image = req.body.image_url;
-      if (req.file) image = `/uploads/${req.file.filename}`;
+      const image = getImage(req);
       const q = image
         ? `UPDATE products SET name=$1,price=$2,description=$3,category_id=$4,featured=$5,image=$6,stock=$7,updated_at=NOW() WHERE id=$8 RETURNING *`
         : `UPDATE products SET name=$1,price=$2,description=$3,category_id=$4,featured=$5,stock=$6,updated_at=NOW() WHERE id=$7 RETURNING *`;
@@ -115,7 +115,7 @@ if (db.isPg) {
   router.post("/", upload.single("image"), (req, res) => {
     try {
       const { name, price, description, category_id, featured, stock } = req.body;
-      const image = req.file ? `/uploads/${req.file.filename}` : req.body.image_url || null;
+      const image = getImage(req);
       const result = db.prepare(
         `INSERT INTO products (name,price,description,category_id,image,featured,stock) VALUES (?,?,?,?,?,?,?)`
       ).run(name, price, description, category_id, image, featured === "true" ? 1 : 0, parseInt(stock) || 0);
@@ -127,8 +127,7 @@ if (db.isPg) {
   router.put("/:id", upload.single("image"), (req, res) => {
     try {
       const { name, price, description, category_id, featured, stock } = req.body;
-      let image = req.body.image_url;
-      if (req.file) image = `/uploads/${req.file.filename}`;
+      const image = getImage(req);
       if (image) {
         db.prepare(`UPDATE products SET name=?,price=?,description=?,category_id=?,featured=?,image=?,stock=?,updated_at=datetime('now') WHERE id=?`)
           .run(name, price, description, category_id, featured === "true" ? 1 : 0, image, parseInt(stock) || 0, req.params.id);

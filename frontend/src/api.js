@@ -1,14 +1,6 @@
 import staticProducts, { categories as staticCategories } from "./data/products";
 
 const BASE = import.meta.env.VITE_API_URL || "/api";
-// API origin for resolving uploaded image paths (e.g. /uploads/img.jpg)
-const API_ORIGIN = BASE.replace(/\/api$/, "");
-
-export function resolveImage(src) {
-  if (!src) return "";
-  if (src.startsWith("http")) return src;
-  return `${API_ORIGIN}${src}`;
-}
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {

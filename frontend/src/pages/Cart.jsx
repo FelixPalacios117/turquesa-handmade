@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiTrash2, FiPlus, FiMinus, FiShoppingBag } from "react-icons/fi";
 import { useCart } from "../context/CartContext";
-import { api, resolveImage } from "../api";
+import { api } from "../api";
 import "./Cart.css";
 
 export default function Cart() {
@@ -64,7 +64,7 @@ export default function Cart() {
         <div className="cart-items">
           {cartItems.map((item) => (
             <div key={item.id} className="cart-item">
-              <img src={resolveImage(item.image)} alt={item.name} />
+              <img src={item.image} alt={item.name} />
               <div className="cart-item-info">
                 <h3>{item.name}</h3>
                 <p className="cart-item-price">${Number(item.price).toFixed(2)}</p>
